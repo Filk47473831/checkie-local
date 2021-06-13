@@ -48,7 +48,7 @@ fs.writeFile(__dirname + '/data.json', data, err => {
   if (err) {
     return console.error(err)
   }
-	return console.log("Receiving: " + data)
+	return console.log("Receiving data")
 })
 
 })
@@ -57,10 +57,14 @@ app.get('/get', function(req, res) {
 	
 	try {
 	  const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
-	  console.log("Sending: " + data)
+	  console.log("Sending data")
 	  res.send(data)
 	} catch (err) {
-	  console.error(err)
+	fs.open(__dirname + '/data.json', 'w', function (err, file) {
+		res.send("")
+  		if (err) throw err;
+	})
+	console.error(err)
 	}
 
 })
