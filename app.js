@@ -27,7 +27,8 @@ var httpsServer = https.createServer(credentials, app)
 httpsServer.listen(9191)
 
 app.get('/',function(req,res) {
-  res.send("Sign-e Local Component")
+  // res.send("Sign-e Local Component")
+  res.render('index.html');
 })
 
 console.log("Running at https://localhost:9191/")
