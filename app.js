@@ -27,7 +27,7 @@ var httpsServer = https.createServer(credentials, app)
 httpsServer.listen(9191)
 
 app.get('/',function(req,res) {
-  // res.send("Sign-e Local Component")
+  // res.send("Checkie Local Server Component")
   res.render('index.html');
 })
 
