@@ -93,3 +93,8 @@ button {
 #title {
   margin-bottom: 0px
 }
+
+#homeBtn {
+  text-decoration: none;
+  color: #000;
+}
