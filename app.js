@@ -9,6 +9,7 @@ const https = require('https')
 const privateKey  = fs.readFileSync('selfsigned.key', 'utf8')
 const certificate = fs.readFileSync('selfsigned.crt', 'utf8')
 const credentials = {key: privateKey, cert: certificate}
+const objectsToCsv = require('objects-to-csv')
 
 app.use(cors())
 app.use(bodyParser.urlencoded({
@@ -69,4 +70,14 @@ app.get('/get', function(req, res) {
 	}
 
 })
+
+
+/* async function convertToCsv(data) {
+   const csv = new objectsToCsv(data)
+   await csv.toDisk('./History.csv', { append: true })
+}
+
+var convertData = [{"fullName":"Chris Groves","company":"JSPC","carReg":"gu69 owa","purpose":"ICT","arrived":"1624279103112","departed":"1624279108353"},{"fullName":"Hannah Wallace","company":"H Samuel","carReg":"NO car","purpose":"TA","arrived":"1624279128489","departed":"1624279135073"}]
+
+convertToCsv(convertData) */
 
