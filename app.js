@@ -34,21 +34,13 @@ app.get('/',function(req,res) {
 
 console.log("Running at https://localhost:9191/")
 
-
-
-
-
-
-
-
-
 app.get('/post', function(req, res) {
 	
 var data = JSON.stringify(req.query)
 	 
 fs.writeFile(__dirname + '/data.json', data, err => {
   if (err) {
-    return console.error(err)
+    return console.error(err.code)
   }
 	return console.log("Receiving data")
 })
@@ -58,26 +50,32 @@ fs.writeFile(__dirname + '/data.json', data, err => {
 app.get('/get', function(req, res) {
 	
 	try {
-	  const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
-	  console.log("Sending data")
-	  res.send(data)
+		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
+		console.log("Sending data")
+		res.send(data)
 	} catch (err) {
-	fs.open(__dirname + '/data.json', 'w', function (err, file) {
 		res.send("")
-  		if (err) throw err;
-	})
-	console.error(err)
+		console.error(err.code)
 	}
 
 })
 
+setInterval(function(){
+	
+	try {
+		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
+		console.log("Moving data to History")
+		convertToCsv(JSON.parse(JSON.stringify(JSON.parse(data).people)))
+		fs.unlink(__dirname + '/data.json', function(){
+			console.log("JSON Data File Cleared")
+		})
+	} catch (err) {
+		console.error(err.code)
+	}
+	
+},86400000)
 
-/* async function convertToCsv(data) {
+async function convertToCsv(data) {
    const csv = new objectsToCsv(data)
    await csv.toDisk('./History.csv', { append: true })
 }
-
-var convertData = [{"fullName":"Chris Groves","company":"JSPC","carReg":"gu69 owa","purpose":"ICT","arrived":"1624279103112","departed":"1624279108353"},{"fullName":"Hannah Wallace","company":"H Samuel","carReg":"NO car","purpose":"TA","arrived":"1624279128489","departed":"1624279135073"}]
-
-convertToCsv(convertData) */
-
