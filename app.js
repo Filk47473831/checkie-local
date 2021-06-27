@@ -6,8 +6,8 @@ const request = require('request')
 const fs = require('fs')
 const http = require('http')
 const https = require('https')
-const privateKey  = fs.readFileSync('selfsigned.key', 'utf8')
-const certificate = fs.readFileSync('selfsigned.crt', 'utf8')
+const privateKey  = fs.readFileSync('checkie.key', 'utf8')
+const certificate = fs.readFileSync('checkie.crt', 'utf8')
 const credentials = {key: privateKey, cert: certificate}
 const objectsToCsv = require('objects-to-csv')
 
