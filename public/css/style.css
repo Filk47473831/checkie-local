@@ -1,9 +1,14 @@
 body {
   font-family: Poppins, sans-serif;
-  background: -webkit-linear-gradient(bottom left, #ee7752, #e299b5, #23a6d5, #23d5ab);
+  color: #fff;
+/*   background: -webkit-linear-gradient(bottom left, #ee7752, #e299b5, #23a6d5, #23d5ab);
   background: -moz-linear-gradient(bottom left, #ee7752, #e299b5, #23a6d5, #23d5ab);
   background: -o-linear-gradient(bottom left, #ee7752, #e299b5, #23a6d5, #23d5ab);
-  background: linear-gradient(to top right, #ee7752, #e299b5, #23a6d5, #23d5ab);
+  background: linear-gradient(to top right, #ee7752, #e299b5, #23a6d5, #23d5ab); */
+  background: -webkit-linear-gradient(bottom left, #411640, #411640, #411640, #411640);
+  background: -moz-linear-gradient(bottom left, #411640, #411640, #411640, #411640);
+  background: -o-linear-gradient(bottom left, #411640, #411640, #411640, #411640);
+  background: linear-gradient(to top right, #411640, #411640, #411640, #411640);
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
   overflow: hidden;
@@ -96,5 +101,5 @@ button {
 
 #homeBtn {
   text-decoration: none;
-  color: #000;
+  color: #fff;
 }

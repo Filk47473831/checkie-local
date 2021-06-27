@@ -48,6 +48,8 @@ fs.writeFile(__dirname + '/data.json', data, err => {
 })
 
 app.get('/get', function(req, res) {
+
+	console.log("Checkie requesting data")
 	
 	try {
 		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
