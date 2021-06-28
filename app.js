@@ -37,12 +37,14 @@ console.log("Running at https://localhost:9191/")
 app.get('/post', function(req, res) {
 	
 var data = JSON.stringify(req.query)
+
+console.log("Receiving data " + data)
 	 
 fs.writeFile(__dirname + '/data.json', data, err => {
   if (err) {
     return console.error(err.code)
   }
-	return console.log("Receiving data")
+	return console.log("Saving data")
 })
 
 })
