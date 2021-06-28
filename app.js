@@ -34,7 +34,7 @@ app.get('/',function(req,res) {
 
 console.log("Running at https://localhost:9191/")
 
-app.get('/post', function(req, res) {
+app.get('/postvisitors', function(req, res) {
 	
 var data = JSON.stringify(req.query)
 
@@ -44,18 +44,48 @@ fs.writeFile(__dirname + '/data.json', data, err => {
   if (err) {
     return console.error(err.code)
   }
+	return console.log("Saving visitor data")
+})
+
+})
+
+app.get('/getvisitors', function(req, res) {
+
+	console.log("Checkie requesting visitor data")
+	
+	try {
+		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
+		console.log("Sending data")
+		res.send(data)
+	} catch (err) {
+		res.send("")
+		console.error(err.code)
+	}
+
+})
+
+app.get('/poststaff', function(req, res) {
+	
+var data = JSON.stringify(req.query)
+
+console.log("Receiving data " + data)
+	 
+fs.writeFile(__dirname + '/staff.json', data, err => {
+  if (err) {
+    return console.error(err.code)
+  }
 	return console.log("Saving data")
 })
 
 })
 
-app.get('/get', function(req, res) {
+app.get('/getstaff', function(req, res) {
 
-	console.log("Checkie requesting data")
+	console.log("Checkie requesting staff data")
 	
 	try {
-		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
-		console.log("Sending data")
+		const data = fs.readFileSync(__dirname + '/staff.json', 'utf8')
+		console.log("Sending staff data")
 		res.send(data)
 	} catch (err) {
 		res.send("")
