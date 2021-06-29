@@ -55,7 +55,7 @@ app.get('/getvisitors', function(req, res) {
 	
 	try {
 		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
-		console.log("Sending data")
+		console.log("Sending visitor data")
 		res.send(data)
 	} catch (err) {
 		res.send("")
