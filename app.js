@@ -10,6 +10,27 @@ const privateKey  = fs.readFileSync('checkie.key', 'utf8')
 const certificate = fs.readFileSync('checkie.crt', 'utf8')
 const credentials = {key: privateKey, cert: certificate}
 const objectsToCsv = require('objects-to-csv')
+const crypto = require("crypto");
+
+var apikey = ""
+
+try {
+	const data = fs.readFileSync(__dirname + '/apikey.txt', 'utf8')
+	console.log("API Key loaded")
+	apikey = data
+} catch (err) {
+	console.log("No API Key - creating new key")
+	
+	apikey = crypto.randomBytes(20).toString('hex');
+	
+	fs.writeFile(__dirname + '/apikey.txt', apikey, err => {
+  if (err) {
+    return console.error("Error saving new API Key: " + err.code)
+  }
+	return console.log("Saving new API Key: " + apikey)
+})
+
+}	
 
 app.use(cors())
 app.use(bodyParser.urlencoded({
