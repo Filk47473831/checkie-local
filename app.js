@@ -49,7 +49,6 @@ var httpsServer = https.createServer(credentials, app)
 httpsServer.listen(9191)
 
 app.get('/',function(req,res) {
-  // res.send("Checkie Local Server Component")
   res.render('index.html');
 })
 
@@ -59,18 +58,27 @@ app.get('/postvisitors', function(req, res) {
 	
 var data = JSON.stringify(req.query)
 
-console.log("Receiving data " + data)
-	 
-fs.writeFile(__dirname + '/data.json', data, err => {
-  if (err) {
-    return console.error(err.code)
-  }
-	return console.log("Saving visitor data")
-})
+if(req.query.key === apikey) {
+
+	console.log("Receiving data " + data)
+		 
+	fs.writeFile(__dirname + '/data.json', data, err => {
+	  if (err) {
+		return console.error(err.code)
+	  }
+		return console.log("Saving visitor data")
+	})
+
+} else {
+	res.status(500).send('error')
+	return console.error("Cannot save - API Key incorrect")
+}
 
 })
 
 app.get('/getvisitors', function(req, res) {
+	
+if(req.query.key === apikey) {
 
 	console.log("Checkie requesting visitor data")
 	
@@ -82,35 +90,54 @@ app.get('/getvisitors', function(req, res) {
 		res.send("")
 		console.error(err.code)
 	}
+	
+} else {
+	res.status(500).send('error')
+	return console.error("Cannot save - API Key incorrect")
+}
 
 })
 
 app.get('/poststaff', function(req, res) {
+		
+	if(req.query.key === apikey) {
 	
-var data = JSON.stringify(req.query)
+		var data = JSON.stringify(req.query)
 
-console.log("Receiving data " + data)
-	 
-fs.writeFile(__dirname + '/staff.json', data, err => {
-  if (err) {
-    return console.error(err.code)
-  }
-	return console.log("Saving data")
-})
+		console.log("Receiving data " + data)
+			 
+		fs.writeFile(__dirname + '/staff.json', data, err => {
+		  if (err) {
+			return console.error(err.code)
+		  }
+			return console.log("Saving data")
+		})
+		
+	} else {
+		res.status(500).send('error')
+		return console.error("Cannot retrieve data - API Key incorrect")
+	}
 
 })
 
 app.get('/getstaff', function(req, res) {
-
-	console.log("Checkie requesting staff data")
 	
-	try {
-		const data = fs.readFileSync(__dirname + '/staff.json', 'utf8')
-		console.log("Sending staff data")
-		res.send(data)
-	} catch (err) {
-		res.send("")
-		console.error(err.code)
+	if(req.query.key === apikey) {
+
+		console.log("Checkie requesting staff data")
+		
+		try {
+			const data = fs.readFileSync(__dirname + '/staff.json', 'utf8')
+			console.log("Sending staff data")
+			res.send(data)
+		} catch (err) {
+			res.send("")
+			console.error(err.code)
+		}
+		
+	} else {
+		res.status(500).send('error')
+		return console.error("Cannot retrieve data - API Key incorrect")
 	}
 
 })
