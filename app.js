@@ -12,6 +12,8 @@ const credentials = {key: privateKey, cert: certificate}
 const objectsToCsv = require('objects-to-csv')
 const crypto = require("crypto");
 
+console.log("Checkie Local Server - Dev Build 0.1.3")
+
 var apikey = ""
 
 try {
