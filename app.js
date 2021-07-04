@@ -56,19 +56,22 @@ app.get('/',function(req,res) {
 
 console.log("Running at https://localhost:9191/")
 
-app.get('/postvisitors', function(req, res) {
+app.get('/post', function(req, res) {
 	
 var data = JSON.stringify(req.query)
 
 if(req.query.key === apikey) {
 
+	data = JSON.parse(data)
+	delete data.key
+	data = JSON.stringify(data)
 	console.log("Receiving data " + data)
 		 
 	fs.writeFile(__dirname + '/data.json', data, err => {
 	  if (err) {
 		return console.error(err.code)
 	  }
-		return console.log("Saving visitor data")
+		return console.log("Saving data")
 	})
 
 } else {
@@ -78,15 +81,15 @@ if(req.query.key === apikey) {
 
 })
 
-app.get('/getvisitors', function(req, res) {
+app.get('/get', function(req, res) {
 	
 if(req.query.key === apikey) {
 
-	console.log("Checkie requesting visitor data")
+	console.log("Checkie requesting data")
 	
 	try {
 		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
-		console.log("Sending visitor data")
+		console.log("Sending data")
 		res.send(data)
 	} catch (err) {
 		res.send("")
@@ -100,37 +103,15 @@ if(req.query.key === apikey) {
 
 })
 
-app.get('/poststaff', function(req, res) {
-		
-	if(req.query.key === apikey) {
-	
-		var data = JSON.stringify(req.query)
-
-		console.log("Receiving data " + data)
-			 
-		fs.writeFile(__dirname + '/staff.json', data, err => {
-		  if (err) {
-			return console.error(err.code)
-		  }
-			return console.log("Saving data")
-		})
-		
-	} else {
-		res.status(500).send('error')
-		return console.error("Cannot retrieve data - API Key incorrect")
-	}
-
-})
-
-app.get('/getstaff', function(req, res) {
+app.get('/getstaffnames', function(req, res) {
 	
 	if(req.query.key === apikey) {
 
-		console.log("Checkie requesting staff data")
+		console.log("Checkie requesting staff names")
 		
 		try {
 			const data = fs.readFileSync(__dirname + '/staff.json', 'utf8')
-			console.log("Sending staff data")
+			console.log("Sending staff names")
 			res.send(data)
 		} catch (err) {
 			res.send("")
