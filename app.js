@@ -10,7 +10,8 @@ const privateKey  = fs.readFileSync('checkie.key', 'utf8')
 const certificate = fs.readFileSync('checkie.crt', 'utf8')
 const credentials = {key: privateKey, cert: certificate}
 const objectsToCsv = require('objects-to-csv')
-const crypto = require("crypto");
+const crypto = require('crypto')
+const printer = require('cmd-printer')
 
 console.log("Checkie Local Server - Dev Build 0.1.3")
 
@@ -144,3 +145,19 @@ async function convertToCsv(data) {
    const csv = new objectsToCsv(data)
    await csv.toDisk('./History.csv', { append: true })
 }
+
+
+
+// PRINTING FUNCTIONALITY ***DEVELOPMENT***
+
+var testPrint = async () => {
+  //List all printers
+  var list = await printer.CmdPrinter.getAll()
+ 
+  //Get specific printer
+  var ricoh = await printer.CmdPrinter.getByName("RICOH MP C5503")
+ 
+  //Print document (blocking)
+  await ricoh.print([ `TestPage.pdf` ])
+}
+// testPrint()
