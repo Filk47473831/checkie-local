@@ -57,16 +57,16 @@ app.get('/',function(req,res) {
 
 console.log("Running at https://localhost:9191/")
 
-app.get('/post', function(req, res) {
+app.post('/post', function(req, res) {
 	
-var data = JSON.stringify(req.query)
+var data = JSON.stringify(req.body)
 
-if(req.query.key === apikey) {
+if(req.body.key === apikey) {
 
 	data = JSON.parse(data)
 	delete data.key
 	data = JSON.stringify(data)
-	console.log("Receiving data " + data)
+	console.log("Receiving data")
 		 
 	fs.writeFile(__dirname + '/data.json', data, err => {
 	  if (err) {
@@ -146,6 +146,11 @@ async function convertToCsv(data) {
    await csv.toDisk('./History.csv', { append: true })
 }
 
+
+
+// PDF BADGE FUNCTIONALITY ***DEVELOPMENT***
+
+//
 
 
 // PRINTING FUNCTIONALITY ***DEVELOPMENT***
