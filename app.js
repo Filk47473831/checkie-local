@@ -14,7 +14,7 @@ const crypto = require('crypto')
 const printer = require('cmd-printer')
 const puppeteer = require('puppeteer')
 
-console.log("Checkie Local Server - Dev Build 0.1.8")
+console.log("Checkie Local Server - Dev Build 0.2.0")
 
 var apikey = ""
 
@@ -177,7 +177,10 @@ var html = `<html>
 
 <body style="font-family: Arial, Helvetica, sans-serif;">
 
-	<div style="margin: 30px;border-style: dashed;padding: 20px;width: 500px;">
+	<div style="position: relative;">
+	<div style="height: 268px;position: absolute;top: 0;left: 0;margin: 30px;padding: 20px;background-repeat: no-repeat;width: 500px;background: url(default_admin.png);background-attachment: fixed;background-size: 300px 100px;opacity: 0.04;">
+	</div>
+	<div style="height: 268px;z-index: 10; position: absolute;top: 0;left: 0;margin: 30px;border-style: dashed;padding: 20px;width: 500px;">
 	<h1 style="margin-block-start: 0px;margin-block-end: 0px;text-align: center;margin-bottom: 22px;">${customer}</h1>
     <div style="display: inline-block">
       <img style="width: 200px;" src="${visitor.picture}">
@@ -190,7 +193,7 @@ var html = `<html>
 	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${arrival}</h4>
     </div>
 	</div>
-
+	</div>
 </body>
 
 </html>`
@@ -226,9 +229,17 @@ async function createPDF(id) {
 }
 
 async function printBadge(id) {
+	try {
 	var selectedPrinter = await printer.CmdPrinter.getByName(printerName)
 	await selectedPrinter.print([ id + '.pdf' ])
 	
 	fs.unlinkSync(__dirname + '/' + id + '.html')
 	fs.unlinkSync(__dirname + '/' + id + '.pdf')
+	}
+	catch (error) {
+
+	console.log(error)
+	fs.unlinkSync(__dirname + '/' + id + '.html')
+	fs.unlinkSync(__dirname + '/' + id + '.pdf')
+	}
 }
