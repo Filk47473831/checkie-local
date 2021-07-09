@@ -76,8 +76,10 @@ var data = JSON.stringify(req.body)
 if(req.body.key === apikey) {
 
 	data = JSON.parse(data)
+	var arriving = data.arriving
 	var customer = data.customer
 	delete data.key
+	delete data.arriving
 	delete data.customer
 	data = JSON.stringify(data)
 	console.log("Receiving data")
@@ -88,7 +90,7 @@ if(req.body.key === apikey) {
 	  } else {
 		data = JSON.parse(data)
 		var lastEntry = data.people[data.people.length-1]
-		if(lastEntry.type == "visitor" && lastEntry.departed == undefined) { prepareBadge(lastEntry, customer) }
+		if(arriving == "true" && lastEntry.type == "visitor") { prepareBadge(lastEntry, customer) }
 		return console.log("Saving data")
 	  }
 	})
