@@ -12,8 +12,9 @@ const credentials = {key: privateKey, cert: certificate}
 const objectsToCsv = require('objects-to-csv')
 const crypto = require('crypto')
 const printer = require('cmd-printer')
+const puppeteer = require('puppeteer')
 
-console.log("Checkie Local Server - Dev Build 0.1.3")
+console.log("Checkie Local Server - Dev Build 0.1.8")
 
 var apikey = ""
 
@@ -33,7 +34,17 @@ try {
 	return console.log("Saving new API Key: " + apikey)
 })
 
-}	
+}
+
+var printerName = ""
+
+try {
+	const data = fs.readFileSync(__dirname + '/printer.txt', 'utf8')
+	console.log("Printer loaded")
+	printerName = data
+} catch (err) {
+	console.log("No Printer")
+}
 
 app.use(cors())
 app.use(bodyParser.urlencoded({
@@ -65,15 +76,21 @@ var data = JSON.stringify(req.body)
 if(req.body.key === apikey) {
 
 	data = JSON.parse(data)
+	var customer = data.customer
 	delete data.key
+	delete data.customer
 	data = JSON.stringify(data)
 	console.log("Receiving data")
 		 
 	fs.writeFile(__dirname + '/data.json', data, err => {
 	  if (err) {
 		return console.error(err.code)
-	  }
+	  } else {
+		data = JSON.parse(data)
+		var lastEntry = data.people[data.people.length-1]
+		if(lastEntry.type == "visitor" && lastEntry.departed == undefined) { prepareBadge(lastEntry, customer) }
 		return console.log("Saving data")
+	  }
 	})
 
 } else {
@@ -147,23 +164,69 @@ async function convertToCsv(data) {
    await csv.toDisk('./History.csv', { append: true })
 }
 
+function prepareBadge(visitor, customer) {
+	
+var arrivalTime = new Date(+visitor.arrived).toLocaleTimeString("en-GB")
+var arrivalDate = new Date(+visitor.arrived).toLocaleDateString("en-GB")
 
+var arrival = arrivalTime + " - " + arrivalDate
 
-// PDF BADGE FUNCTIONALITY ***DEVELOPMENT***
+var html = `<html>
 
-//
+<body style="font-family: Arial, Helvetica, sans-serif;">
 
+	<div style="margin: 30px;border-style: dashed;padding: 20px;width: 500px;">
+	<h1 style="margin-block-start: 0px;margin-block-end: 0px;text-align: center;margin-bottom: 22px;">${customer}</h1>
+    <div style="display: inline-block">
+      <img style="width: 200px;" src="${visitor.picture}">
+	</div>
+	<div style="display: inline-block;margin-left: 6px;">
+	  <h1 style="margin-block-start: 0px;margin-block-end: 0px;">Visitor</h1>
+	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 10px;">${visitor.fullName}</h4>
+	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 18px;">${visitor.company}</h4>
+	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${visitor.purpose}</h4>
+	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${arrival}</h4>
+    </div>
+	</div>
 
-// PRINTING FUNCTIONALITY ***DEVELOPMENT***
+</body>
 
-var testPrint = async () => {
-  //List all printers
-  var list = await printer.CmdPrinter.getAll()
- 
-  //Get specific printer
-  var ricoh = await printer.CmdPrinter.getByName("RICOH MP C5503")
- 
-  //Print document (blocking)
-  await ricoh.print([ `TestPage.pdf` ])
+</html>`
+
+var id = Math.random().toString(36).substring(7)
+
+	fs.writeFile(__dirname + '/' + id + '.html', html, err => {
+	  if (err) {
+		return console.error(err.code)
+	  } else {
+		  createPDF(id)
+	  }
+	})
+
 }
-// testPrint()
+
+async function createPDF(id) {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  await page.goto(__dirname + '/' + id + '.html');
+  const pdf = await page.pdf({ format: 'A4' });
+ 
+  await browser.close();
+  
+  	fs.writeFile(__dirname + '/' + id + '.pdf', pdf, err => {
+	  if (err) {
+		return console.error(err.code)
+	  } else {
+		  printBadge(id)
+	  }
+	})
+  
+}
+
+async function printBadge(id) {
+	var selectedPrinter = await printer.CmdPrinter.getByName(printerName)
+	await selectedPrinter.print([ id + '.pdf' ])
+	
+	fs.unlinkSync(__dirname + '/' + id + '.html')
+	fs.unlinkSync(__dirname + '/' + id + '.pdf')
+}
