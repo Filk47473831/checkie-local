@@ -14,24 +14,24 @@ const crypto = require('crypto')
 const printer = require('cmd-printer')
 const puppeteer = require('puppeteer')
 
-console.log("Checkie Local Server - Dev Build 0.2.0")
+console.log(getTime() + " - Checkie Local Server - Dev Build 0.2.0")
 
 var apikey = ""
 
 try {
 	const data = fs.readFileSync(__dirname + '/apikey.txt', 'utf8')
-	console.log("API Key loaded")
+	console.log(getTime() + " - API Key loaded")
 	apikey = data
 } catch (err) {
-	console.log("No API Key - creating new key")
+	console.log(getTime() + " - No API Key - creating new key")
 	
 	apikey = crypto.randomBytes(20).toString('hex');
 	
 	fs.writeFile(__dirname + '/apikey.txt', apikey, err => {
   if (err) {
-    return console.error("Error saving new API Key: " + err.code)
+    return console.error(getTime() + " - Error saving new API Key: " + err.code)
   }
-	return console.log("Saving new API Key: " + apikey)
+	return console.log(getTime() + " - Saving new API Key: " + apikey)
 })
 
 }
@@ -40,10 +40,10 @@ var printerName = ""
 
 try {
 	const data = fs.readFileSync(__dirname + '/printer.txt', 'utf8')
-	console.log("Printer loaded")
+	console.log(getTime() + " - Printer loaded")
 	printerName = data
 } catch (err) {
-	console.log("No Printer")
+	console.log(getTime() + " - No Printer")
 }
 
 app.use(cors())
@@ -67,7 +67,7 @@ app.get('/',function(req,res) {
   res.render('index.html');
 })
 
-console.log("Running at https://localhost:9191/")
+console.log(getTime() + " - Running at https://localhost:9191/")
 
 app.post('/post', function(req, res) {
 	
@@ -82,22 +82,22 @@ if(req.body.key === apikey) {
 	delete data.arriving
 	delete data.customer
 	data = JSON.stringify(data)
-	console.log("Receiving data")
+	console.log(getTime() + " - Receiving data")
 		 
 	fs.writeFile(__dirname + '/data.json', data, err => {
 	  if (err) {
-		return console.error(err.code)
+		return console.error(getTime() + " - " + err.code)
 	  } else {
 		data = JSON.parse(data)
 		var lastEntry = data.people[data.people.length-1]
 		if(arriving == "true" && lastEntry.type == "visitor") { prepareBadge(lastEntry, customer) }
-		return console.log("Saving data")
+		return console.log(getTime() + " - Saving data")
 	  }
 	})
 
 } else {
 	res.status(500).send('error')
-	return console.error("Cannot save - API Key incorrect")
+	return console.error(getTime() + " - Cannot save - API Key incorrect")
 }
 
 })
@@ -106,20 +106,20 @@ app.get('/get', function(req, res) {
 	
 if(req.query.key === apikey) {
 
-	console.log("Checkie requesting data")
+	console.log(getTime() + " - Requesting data")
 	
 	try {
 		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
-		console.log("Sending data")
+		console.log(getTime() + " - Sending data")
 		res.send(data)
 	} catch (err) {
 		res.send("")
-		console.error(err.code)
+		console.error(getTime() + " - " + err.code)
 	}
 	
 } else {
 	res.status(500).send('error')
-	return console.error("Cannot save - API Key incorrect")
+	return console.error(getTime() + " - Cannot save - API Key incorrect")
 }
 
 })
@@ -128,20 +128,20 @@ app.get('/getstaffnames', function(req, res) {
 	
 	if(req.query.key === apikey) {
 
-		console.log("Checkie requesting staff names")
+		console.log(getTime() + " - Requesting staff names")
 		
 		try {
 			const data = fs.readFileSync(__dirname + '/staff.json', 'utf8')
-			console.log("Sending staff names")
+			console.log(getTime() + " - Sending staff names")
 			res.send(data)
 		} catch (err) {
 			res.send("")
-			console.error(err.code)
+			console.error(getTime() + " - " + err.code)
 		}
 		
 	} else {
 		res.status(500).send('error')
-		return console.error("Cannot retrieve data - API Key incorrect")
+		return console.error(getTime() + " - Cannot retrieve data - API Key incorrect")
 	}
 
 })
@@ -150,13 +150,13 @@ setInterval(function(){
 	
 	try {
 		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
-		console.log("Moving data to History")
+		console.log(getTime() + " - Moving data to History")
 		convertToCsv(JSON.parse(JSON.stringify(JSON.parse(data).people)))
 		fs.unlink(__dirname + '/data.json', function(){
-			console.log("JSON Data File Cleared")
+			console.log(getTime() + " - Data File Cleared")
 		})
 	} catch (err) {
-		console.error(err.code)
+		console.error(getTime() + " - " + err.code)
 	}
 	
 },86400000)
@@ -202,7 +202,7 @@ var id = Math.random().toString(36).substring(7)
 
 	fs.writeFile(__dirname + '/' + id + '.html', html, err => {
 	  if (err) {
-		return console.error(err.code)
+		return console.error(getTime() + " - Error creating badge - " + err.code)
 	  } else {
 		  createPDF(id)
 	  }
@@ -211,16 +211,16 @@ var id = Math.random().toString(36).substring(7)
 }
 
 async function createPDF(id) {
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
-  await page.goto(__dirname + '/' + id + '.html');
-  const pdf = await page.pdf({ format: 'A4' });
+  const browser = await puppeteer.launch({ headless: true })
+  const page = await browser.newPage()
+  await page.goto(__dirname + '/' + id + '.html')
+  const pdf = await page.pdf({ format: 'A4' })
  
   await browser.close();
   
   	fs.writeFile(__dirname + '/' + id + '.pdf', pdf, err => {
 	  if (err) {
-		return console.error(err.code)
+		return console.error(getTime() + " - Error creating badge - " + err.code)
 	  } else {
 		  printBadge(id)
 	  }
@@ -235,11 +235,16 @@ async function printBadge(id) {
 	
 	fs.unlinkSync(__dirname + '/' + id + '.html')
 	fs.unlinkSync(__dirname + '/' + id + '.pdf')
+	console.log(getTime() + " - Badge Printed to " + printerName)
 	}
 	catch (error) {
 
-	console.log(error)
+	console.log(getTime() + " - Error creating badge - " + error)
 	fs.unlinkSync(__dirname + '/' + id + '.html')
 	fs.unlinkSync(__dirname + '/' + id + '.pdf')
 	}
+}
+
+function getTime() {
+	return new Date().toUTCString()
 }
