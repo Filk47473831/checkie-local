@@ -40,7 +40,7 @@ var printerName = ""
 
 try {
 	const data = fs.readFileSync(__dirname + '/printer.txt', 'utf8')
-	console.log(getTime() + " - Printer loaded")
+	console.log(getTime() + " - Printer loaded - " + data)
 	printerName = data
 } catch (err) {
 	console.log(getTime() + " - No Printer")
@@ -206,11 +206,11 @@ var html = `<html>
 <body style="font-family: Arial, Helvetica, sans-serif;">
 
 	<div style="position: relative;">
-	<div style="height: 268px;position: absolute;top: 0;left: 0;margin: 30px;padding: 20px;background-repeat: no-repeat;width: 500px;background: url(default_admin.png);background-attachment: fixed;background-size: 300px 100px;opacity: 0.04;">
+	<div style="height: 268px;position: absolute;top: 0;left: 0;padding: 10px;background-repeat: no-repeat;width: 500px;background: url(default_admin.png);background-attachment: fixed;background-size: 300px 100px;opacity: 0.04;">
 	</div>
-	<div style="height: 268px;z-index: 10; position: absolute;top: 0;left: 0;margin: 30px;border-style: dashed;padding: 20px;width: 500px;">
-	<h1 style="margin-block-start: 0px;margin-block-end: 0px;text-align: center;margin-bottom: 22px;">${customer}</h1>
-    <div style="display: inline-block">
+	<div style="height: 268px;z-index: 10; position: absolute;top: 0;left: 0;border-style: dashed;padding: 5px;width: 500px;">
+	<h1 style="margin-block-start: 0px;margin-block-end: 0px;text-align: center;margin-bottom: 12px;">${customer}</h1>
+    <div style="display: inline-block;margin-left: 26px;">
       <img style="width: 200px;" src="${visitor.picture}">
 	</div>
 	<div style="display: inline-block;margin-left: 6px;">
@@ -218,7 +218,7 @@ var html = `<html>
 	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 10px;">${visitor.fullName}</h4>
 	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 18px;">${visitor.company}</h4>
 	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${visitor.purpose}</h4>
-	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${arrival}</h4>
+	  <h4 style="margin-block-start: 0px;margin-block-end: 0px;margin-top: 16px;">${arrival}</h4>
     </div>
 	</div>
 	</div>
