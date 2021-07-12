@@ -146,6 +146,34 @@ app.get('/getstaffnames', function(req, res) {
 
 })
 
+app.post('/poststaffnames', function(req, res) {
+	
+var data = JSON.stringify(req.body)
+
+if(req.body.key === apikey) {
+
+	data = JSON.parse(data)
+	delete data.key
+	data = JSON.stringify(data)
+	console.log(getTime() + " - Receiving staff names data")
+		 
+	fs.writeFile(__dirname + '/staff.json', data, err => {
+	  if (err) {
+		res.error("error")
+		return console.error(getTime() + " - " + err.code)
+	  } else {
+		res.send("success")
+		return console.log(getTime() + " - Saving staff names data")
+	  }
+	})
+
+} else {
+	res.status(500).send('error')
+	return console.error(getTime() + " - Cannot save - API Key incorrect")
+}
+
+})
+
 setInterval(function(){
 	
 	try {
