@@ -1,3 +1,5 @@
+// Set constants
+//
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -16,6 +18,8 @@ const puppeteer = require('puppeteer')
 
 console.log(getTime() + " - Checkie Local Server - Dev Build 0.2.0")
 
+// Set API key to secure access to this API
+//
 var apikey = ""
 
 try {
@@ -36,6 +40,8 @@ try {
 
 }
 
+// Get Printer name from printer.txt file
+//
 var printerName = ""
 
 try {
@@ -46,6 +52,9 @@ try {
 	console.log(getTime() + " - No Printer")
 }
 
+
+// Configure local webserver parameters
+//
 app.use(cors())
 app.use(bodyParser.urlencoded({
 	limit: '50mb',
@@ -63,12 +72,16 @@ var httpsServer = https.createServer(credentials, app)
 
 httpsServer.listen(9191)
 
+// Configure landing page to test API functionality
+//
 app.get('/',function(req,res) {
   res.render('index.html');
 })
 
 console.log(getTime() + " - Running at https://localhost:9191/")
 
+// Save visitor staff sign-in data to data.json
+//
 app.post('/post', function(req, res) {
 	
 var data = JSON.stringify(req.body)
@@ -102,6 +115,8 @@ if(req.body.key === apikey) {
 
 })
 
+// Get data from data.json file to be used in Checkie app
+//
 app.get('/get', function(req, res) {
 	
 if(req.query.key === apikey) {
@@ -124,6 +139,8 @@ if(req.query.key === apikey) {
 
 })
 
+// Get list of Staff names from staff.json
+//
 app.get('/getstaffnames', function(req, res) {
 	
 	if(req.query.key === apikey) {
@@ -146,6 +163,8 @@ app.get('/getstaffnames', function(req, res) {
 
 })
 
+// Receive list of Staff names and save to staff.json
+//
 app.post('/poststaffnames', function(req, res) {
 	
 var data = JSON.stringify(req.body)
@@ -174,12 +193,37 @@ if(req.body.key === apikey) {
 
 })
 
-setInterval(function(){
+// Get data from data.json and remove the picture fields and then save to History.csv (then clear the data.json - to be run daily at 1am)
+//
+function clearDataToHistory(){
 	
 	try {
 		const data = fs.readFileSync(__dirname + '/data.json', 'utf8')
 		console.log(getTime() + " - Moving data to History")
-		convertToCsv(JSON.parse(JSON.stringify(JSON.parse(data).people)))
+		
+		var objectData = JSON.parse(data)
+		
+		objectData.people.forEach(function(entry) {
+			delete entry.picture
+		  
+			var arrivalTime = new Date(+entry.arrived).toLocaleTimeString("en-GB")
+			var arrivalDate = new Date(+entry.arrived).toLocaleDateString("en-GB")
+			var departureTime
+			var departureDate
+
+			if (entry.departed) {
+			  departureTime = new Date(+entry.departed).toLocaleTimeString("en-GB")
+			  departureDate = new Date(+entry.departed).toLocaleDateString("en-GB")
+			} else {
+			  departureTime = ""
+			  departureDate = ""
+			}
+			
+			entry.arrived = arrivalTime + " - " + arrivalDate
+			entry.departed = departureTime + " - " + departureDate
+        })
+		
+		convertToCsv(objectData.people)
 		fs.unlink(__dirname + '/data.json', function(){
 			console.log(getTime() + " - Data File Cleared")
 		})
@@ -187,13 +231,31 @@ setInterval(function(){
 		console.error(getTime() + " - " + err.code)
 	}
 	
-},86400000)
+}
 
+
+// Calculate how long until 1am to schedule the data clear to history
+//
+var now = new Date()
+var millisTill1 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 1, 0, 0, 0) - now
+if (millisTill1 < 0) {
+     millisTill1 += 86400000
+}
+setTimeout(function(){
+		clearDataToHistory()
+	}, millisTill1)
+
+
+// Convert data object to CSV file
+//
 async function convertToCsv(data) {
    const csv = new objectsToCsv(data)
    await csv.toDisk('./History.csv', { append: true })
 }
 
+
+// Prepare a HTML file for the visitor badge
+//
 function prepareBadge(visitor, customer) {
 	
 var arrivalTime = new Date(+visitor.arrived).toLocaleTimeString("en-GB")
@@ -238,6 +300,8 @@ var id = Math.random().toString(36).substring(7)
 
 }
 
+// Create a PDF file from the HTML file for the Visitor badge
+//
 async function createPDF(id) {
   const browser = await puppeteer.launch({ headless: true })
   const page = await browser.newPage()
@@ -256,6 +320,8 @@ async function createPDF(id) {
   
 }
 
+// Print the PDF Visitor badge file to the printer specified in printer.txt
+//
 async function printBadge(id) {
 	try {
 	var selectedPrinter = await printer.CmdPrinter.getByName(printerName)
@@ -273,6 +339,8 @@ async function printBadge(id) {
 	}
 }
 
+// Get the current time (for logging purposes)
+//
 function getTime() {
 	return new Date().toUTCString()
 }
