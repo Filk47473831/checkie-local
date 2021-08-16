@@ -9,10 +9,12 @@
   "author": "Chris Groves",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "cmd-printer": "^0.4.7",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "crypto-js": "^4.1.1",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "objects-to-csv": "^1.3.6",
