@@ -93,7 +93,7 @@ if(data.customer == "") { customer = "..." } else { customer = data.customer }
 
 try {
 	const data = fs.readFileSync(__dirname + '/badge_layout.html', 'utf8')
-	console.log(getTime() + " - Badge Layout")
+	console.log(getTime() + " - Badge layout loaded")
 	html = data
 } catch (err) {
 	return console.log(getTime() + " - No Badge Layout")
