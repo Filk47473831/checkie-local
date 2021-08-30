@@ -15,7 +15,6 @@
     "crypto-js": "^4.1.1",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "node-webkit": "0.0.0",
     "puppeteer": "^10.1.0",
     "request": "^2.88.2"
   }

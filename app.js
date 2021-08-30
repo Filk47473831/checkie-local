@@ -11,6 +11,7 @@ const CryptoJS = require('crypto-js')
 const printer = require('cmd-printer')
 const puppeteer = require('puppeteer')
 
+
 console.log(getTime() + " - Checkie Local Server - Dev Build 0.2.0")
 
 // Set API key to secure access to this API
@@ -18,7 +19,7 @@ console.log(getTime() + " - Checkie Local Server - Dev Build 0.2.0")
 var apikey = ""
 
 try {
-	const data = fs.readFileSync(__dirname + '/apikey.txt', 'utf8')
+	const data = fs.readFileSync('apikey.txt', 'utf8')
 	console.log(getTime() + " - API Key loaded")
 	apikey = data
 } catch (err) {
@@ -30,7 +31,7 @@ try {
 var secretKey = ""
 
 try {
-	const data = fs.readFileSync(__dirname + '/secretkey.txt', 'utf8')
+	const data = fs.readFileSync('secretkey.txt', 'utf8')
 	console.log(getTime() + " - Secret Key loaded")
 	secretKey = data
 } catch (err) {
@@ -42,7 +43,7 @@ try {
 var printerName = ""
 
 try {
-	const data = fs.readFileSync(__dirname + '/printer.txt', 'utf8')
+	const data = fs.readFileSync('printer.txt', 'utf8')
 	console.log(getTime() + " - Printer loaded - " + data)
 	printerName = data
 } catch (err) {
@@ -124,30 +125,23 @@ try {
 }
 
 var id = Math.random().toString(36).substring(7)
-
-	fs.writeFile(__dirname + '/' + id + '.html', html, err => {
-	  if (err) {
-		return console.error(getTime() + " - Error creating badge - " + err.code)
-	  } else {
-		  createPDF(id)
-	  }
-	})
+createPDF(id, html)
 
 }
 
 // Create a PDF file from the HTML file for the Visitor badge
 //
-async function createPDF(id) {
+async function createPDF(id, html) {
+			
   const browser = await puppeteer.launch({ headless: true })
-  const page = await browser.newPage()
-  await page.goto(__dirname + '/' + id + '.html')
+  const page = await browser.newPage()    
+  await page.setContent(html);
   const pdf = await page.pdf({ width: '960px', height: '1280px', scale: 2, landscape: true, printBackground: true, pageRanges: '1-1' }) 
   await browser.close();
   
-  	fs.writeFile(__dirname + '/' + id + '.pdf', pdf, err => {
+  	fs.writeFile(id + '.pdf', pdf, err => {
 	  if (err) {
-		fs.unlinkSync(__dirname + '/' + id + '.html')
-		return console.error(getTime() + " - Error creating badge - " + err.code)
+		return console.error(getTime() + " - Error creating badge (2) - " + err.code)
 	  } else {
 		printBadge(id)
 	  }
@@ -158,19 +152,19 @@ async function createPDF(id) {
 // Print the PDF Visitor badge file to the printer specified in printer.txt
 //
 async function printBadge(id) {
+	
+	console.log(printerName)
+	
 	try {
 	var selectedPrinter = await printer.CmdPrinter.getByName(printerName)
 	await selectedPrinter.print([ id + '.pdf' ])
-	
-	fs.unlinkSync(__dirname + '/' + id + '.html')
-	fs.unlinkSync(__dirname + '/' + id + '.pdf')
+	fs.unlinkSync(id + '.pdf')
 	console.log(getTime() + " - Badge Printed to " + printerName)
 	}
 	catch (error) {
 
-	console.log(getTime() + " - Error creating badge - " + error)
-	fs.unlinkSync(__dirname + '/' + id + '.html')
-	fs.unlinkSync(__dirname + '/' + id + '.pdf')
+	console.log(getTime() + " - Error creating badge (3) - " + error)
+	fs.unlinkSync(id + '.pdf')
 	}
 }
 
