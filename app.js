@@ -54,7 +54,7 @@ try {
 //
 app.use(cors())
 app.use(bodyParser.urlencoded({
-	limit: '50mb',
+	limit: '128mb',
     extended: true
 }))
 
@@ -68,8 +68,6 @@ params.append('apikey', apikey)
 
 axios.post('https://checkie.co.uk/print', params)
 	.then(res => {
-/* 		console.log(`statusCode: ${res.statusCode}`)
-		console.log(res) */
 		prepareBadge(res.data)
 	  })
 	  .catch(error => {
@@ -85,7 +83,7 @@ axios.post('https://checkie.co.uk/print', params)
 //
 function prepareBadge(data) {
 	
-	// Decrypt Data before using
+// Decrypt Data before using
 
 var arrivalTime = new Date(+data.arrived).toLocaleTimeString("en-GB")
 var arrivalDate = new Date(+data.arrived).toLocaleDateString("en-GB")
@@ -93,31 +91,13 @@ var arrivalDate = new Date(+data.arrived).toLocaleDateString("en-GB")
 var arrival = arrivalTime + " - " + arrivalDate
 if(data.customer == "") { customer = "..." } else { customer = data.customer }
 
-var html = `<html>
-
-<body style="font-family: Arial, Helvetica, sans-serif;">
-
-	<div style="height: 100%; position: relative;">
-	<div style="height: 100%; position: absolute; top: 0; left: 0; padding: 10px; width: 100%; background: url(default_admin.png); background-attachment: fixed; background-size: 300px 122px; opacity: 0.04;">
-	</div>
-	<div style="height: 296px;z-index: 10;position: absolute;top: 0;left: 0;/* border-style: dashed; */padding: 5px;width: 668px;">
-	<h1 style="text-align: center;margin-bottom: 12px;font-size: 3rem;">${customer}</h1>
-    <div style="display: inline-block;margin-left: 46px;">
-      <img style="max-height: 260px;max-width: 260px;" src="${decrypt(data.picture)}">
-	</div>
-	<div style="display: inline-block;margin-left: 12px;">
-	  <h1 style="font-size: 4rem;margin-block-start: 0px;margin-block-end: 0px;">Visitor</h1>
-	  <h4 style="font-size: 2.5rem;margin-block-start: 0px;margin-block-end: 0px;margin-top: 14px;">${decrypt(data.fullName)}</h4>
-	  <h4 style="font-size: 1.5rem;margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${decrypt(data.company)}</h4>
-	  <h4 style="font-size: 1.5rem;margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${decrypt(data.purpose)}</h4>
-	  <h4 style="font-size: 2rem;margin-block-start: 0px;margin-block-end: 0px;margin-top: 12px;">${arrival}</h4>
-    </div>
-	</div>
-	</div>
-
-</body>
-
-</html>`
+try {
+	const data = fs.readFileSync(__dirname + '/badge_layout.html', 'utf8')
+	console.log(getTime() + " - Badge Layout")
+	html = data
+} catch (err) {
+	return console.log(getTime() + " - No Badge Layout")
+}
 
 var id = Math.random().toString(36).substring(7)
 
