@@ -294,5 +294,5 @@ function generateString(length, characterCase = false) {
 // Write log to event viewer
 //
 function log(message) {
-	eventLog.info(message, 9191)
+	eventLog.info(message, 1000)
 }
