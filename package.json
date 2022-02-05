@@ -1,7 +1,7 @@
 {
-  "name": "Checkie",
-  "version": "1.0.0",
-  "description": "Checkie Local Server",
+  "name": "Checkie Local Server",
+  "version": "01.03.00.00",
+  "description": "Checkie Ltd",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
