@@ -12,8 +12,10 @@ const printer = require('cmd-printer')
 const puppeteer = require('puppeteer')
 const machineId = require('node-machine-id')
 const find = require('local-devices');
+const EventLogger = require('node-windows').EventLogger;
+const eventLog = new EventLogger('Checkie');
 
-log('Checkie Local Server Started - Dev Build 0.2.0')
+log('Checkie Local Server Started - Build 01.03.00.00')
 
 // Get Settings from settings.ini
 //
@@ -289,28 +291,8 @@ function generateString(length, characterCase = false) {
   
 }
 
-// Write to log file
+// Write log to event viewer
 //
 function log(message) {
-	
-	message = getTime() + ' - ' + message + '\r\n'
-	
-	fs.appendFile('log.txt', message, function (err) {
-	  if (err) throw err
-	})
-	
-	fs.readFile('log.txt', 'utf8', function(err, data){
-		if (err){
-			throw err
-		}
-		var linesCount = data.split('\r\n').length
-		if(linesCount > 2000) {
-			var wantedLines = data.split('\r\n').slice(1)
-			wantedLines = wantedLines.join('\r\n')
-			fs.writeFile('log.txt', wantedLines, function (err) {
-				if (err) throw err
-			})
-		}
-	})
-
+	eventLog.info(message, 9191)
 }
